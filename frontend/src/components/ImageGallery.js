@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ImageGallery.css';
 import ImageMenu from './ImageMenu';
 import { ReactComponent as MoreVertIcon } from '../assets/icons/ic_more_vert.svg';
+import { ReactComponent as KeyIcon } from '../assets/icons/ic_key.svg';
+import { ReactComponent as LightIcon } from '../assets/icons/ic_light.svg';
+import { ReactComponent as NightIcon } from '../assets/icons/ic_night.svg';
 
-function ImageGallery({ selectedImage, onImageSelect }) {
+function ImageGallery({ selectedImage, onImageSelect, theme, onToggleTheme, onOpenApiKey }) {
   const [customImages, setCustomImages] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const fileInputRef = useRef(null);
@@ -93,51 +96,71 @@ function ImageGallery({ selectedImage, onImageSelect }) {
 
   return (
     <div className="image-gallery">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileUpload}
-        style={{ display: 'none' }}
-      />
+      <div className="gallery-scroll-area">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+        />
 
-      {/* Upload button at top */}
-      <button
-        className="gallery-upload-btn"
-        onClick={handleUploadClick}
-        title="Upload image"
-      >
-        +
-      </button>
+        {/* Upload button at top */}
+        <button
+          className="gallery-upload-btn"
+          onClick={handleUploadClick}
+          title="Upload image"
+        >
+          +
+        </button>
 
-      {/* Vertical scrolling list of thumbnails */}
-      <div className="gallery-thumbnails">
-        {customImages.map((image) => (
-          <div
-            key={image.id}
-            className={`gallery-thumbnail ${selectedImage?.id === image.id ? 'selected' : ''}`}
-            onClick={() => handleImageClick(image)}
-          >
-            <img
-              src={`http://localhost:8000${image.url}`}
-              alt={`Custom ${image.id}`}
-            />
-            <button
-              ref={el => menuButtonRefs.current[image.id] = el}
-              className="gallery-menu-btn"
-              onClick={(e) => handleMenuClick(e, image.id)}
+        {/* Vertical scrolling list of thumbnails */}
+        <div className="gallery-thumbnails">
+          {customImages.map((image) => (
+            <div
+              key={image.id}
+              className={`gallery-thumbnail ${selectedImage?.id === image.id ? 'selected' : ''}`}
+              onClick={() => handleImageClick(image)}
             >
-              <MoreVertIcon />
-            </button>
-            {menuOpen === image.id && (
-              <ImageMenu
-                onDelete={() => handleDelete(image)}
-                onClose={() => setMenuOpen(null)}
-                triggerRef={{ current: menuButtonRefs.current[image.id] }}
+              <img
+                src={`http://localhost:8000${image.url}`}
+                alt={`Custom ${image.id}`}
               />
-            )}
-          </div>
-        ))}
+              <button
+                ref={el => menuButtonRefs.current[image.id] = el}
+                className="gallery-menu-btn"
+                onClick={(e) => handleMenuClick(e, image.id)}
+              >
+                <MoreVertIcon />
+              </button>
+              {menuOpen === image.id && (
+                <ImageMenu
+                  onDelete={() => handleDelete(image)}
+                  onClose={() => setMenuOpen(null)}
+                  triggerRef={{ current: menuButtonRefs.current[image.id] }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom controls with gradient */}
+      <div className="gallery-bottom-controls">
+        <button
+          className="control-btn"
+          onClick={onOpenApiKey}
+          title="API Key"
+        >
+          <KeyIcon />
+        </button>
+        <button
+          className="control-btn"
+          onClick={onToggleTheme}
+          title={theme === 'light' ? 'Dark mode' : 'Light mode'}
+        >
+          {theme === 'light' ? <NightIcon /> : <LightIcon />}
+        </button>
       </div>
     </div>
   );

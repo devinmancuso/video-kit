@@ -4,11 +4,37 @@
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-scroll-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 1rem 0.75rem;
+  padding-bottom: 80px;
   gap: 1rem;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.gallery-bottom-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0.75rem 1.5rem;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg-primary) 50%);
+  pointer-events: none;
+}
+
+.gallery-bottom-controls .control-btn {
+  pointer-events: auto;
 }
 
 /* Upload button */
@@ -118,12 +144,23 @@
     flex-direction: row;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  .gallery-scroll-area {
+    flex-direction: row;
     padding: 0.75rem;
+    padding-bottom: 0.75rem;
     overflow-x: auto;
     overflow-y: hidden;
   }
 
   .gallery-thumbnails {
     flex-direction: row;
+  }
+
+  .gallery-bottom-controls {
+    position: relative;
+    background: none;
+    padding: 0.75rem;
   }
 }

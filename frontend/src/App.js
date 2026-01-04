@@ -4,9 +4,6 @@ import ImageGallery from './components/ImageGallery';
 import InputPanel from './components/InputPanel';
 import OutputPanel from './components/OutputPanel';
 import ApiKeyModal from './components/ApiKeyModal';
-import { ReactComponent as KeyIcon } from './assets/icons/ic_key.svg';
-import { ReactComponent as LightIcon } from './assets/icons/ic_light.svg';
-import { ReactComponent as NightIcon } from './assets/icons/ic_night.svg';
 import { generateVideo, getJobs } from './services/api';
 
 function App() {
@@ -81,6 +78,9 @@ function App() {
         <ImageGallery
           selectedImage={selectedImage}
           onImageSelect={handleImageSelect}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onOpenApiKey={() => setShowApiKeyModal(true)}
         />
 
         <InputPanel
@@ -99,24 +99,6 @@ function App() {
           onToggleView={toggleViewMode}
           onJobDeleted={handleJobDeleted}
         />
-      </div>
-
-      {/* Bottom left controls */}
-      <div className="bottom-controls">
-        <button
-          className="control-btn"
-          onClick={() => setShowApiKeyModal(true)}
-          title="API Key"
-        >
-          <KeyIcon />
-        </button>
-        <button
-          className="control-btn"
-          onClick={toggleTheme}
-          title={theme === 'light' ? 'Dark mode' : 'Light mode'}
-        >
-          {theme === 'light' ? <NightIcon /> : <LightIcon />}
-        </button>
       </div>
 
       {showApiKeyModal && (
