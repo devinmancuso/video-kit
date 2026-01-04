@@ -47,7 +47,7 @@ Feed of all generations with thumbnails, status badges, and quick actions via th
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/video-kit.git
+git clone https://github.com/mageframe/video-kit.git
 cd video-kit
 
 # Install backend dependencies
