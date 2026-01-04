@@ -60,17 +60,45 @@
   height: 20px;
 }
 
-/* Responsive layout */
-@media (max-width: 1024px) {
+/* Responsive layout - stack columns vertically on mobile */
+@media (max-width: 768px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
   .main-container {
     flex-direction: column;
     height: auto;
     overflow: visible;
   }
 
-  .input-panel-new {
+  /* Column 1: Image Gallery */
+  .image-gallery {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 200px;
+    max-height: 300px;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
 
+  /* Column 2: Input Panel */
+  .input-panel-new {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* Column 3: Output Panel */
+  .output-panel-new {
+    width: 100%;
+    height: auto;
+    min-height: 400px;
+  }
 }
