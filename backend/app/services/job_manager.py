@@ -304,3 +304,76 @@ class JobManager:
                 # Status mapping would go here if needed
             except:
                 pass
+
+    async def check_and_recover_job(self, job_id: str) -> dict:
+        """
+        Check a stuck job's status on Kie.ai and recover if complete.
+        Returns status information about the recovery attempt.
+        """
+        job = await self.get_job(job_id)
+        if not job or not job.kieTaskId:
+            return {"success": False, "message": "Job not found or has no task ID"}
+
+        try:
+            status_data = await self.kie_client.get_task_status(job.kieTaskId, model=job.model)
+            state = status_data.get("state")
+
+            if state == "success":
+                # Download video and complete the job
+                await self.update_job(job_id, {"status": "downloading"})
+
+                # Parse video URL based on model
+                if job.model == "sora2":
+                    result_json_str = status_data.get("resultJson", "{}")
+                    result_json = json.loads(result_json_str)
+                    result_urls = result_json.get("resultUrls", [])
+                    if not result_urls:
+                        await self.update_job(job_id, {
+                            "status": "failed",
+                            "error": "No video URL in response"
+                        })
+                        return {"success": False, "message": "No video URL in response"}
+                    video_url = result_urls[0]
+                else:
+                    video_url = status_data["videoInfo"]["videoUrl"]
+
+                # Save to local storage
+                video_dir = f"{self.base_path}/videos/{job_id}"
+                os.makedirs(video_dir, exist_ok=True)
+
+                video_path = f"{video_dir}/video.mp4"
+                await self.kie_client.download_video(video_url, video_path)
+
+                # Extract first frame as thumbnail
+                thumbnail_path = f"{video_dir}/thumbnail.jpg"
+                thumbnail_success = self._extract_first_frame(video_path, thumbnail_path)
+                local_thumbnail_url = f"/videos/{job_id}/thumbnail.jpg" if thumbnail_success else None
+
+                # Update job as completed
+                await self.update_job(job_id, {
+                    "status": "completed",
+                    "videoUrl": f"/videos/{job_id}/video.mp4",
+                    "thumbnailUrl": local_thumbnail_url,
+                    "completedAt": datetime.utcnow().isoformat()
+                })
+
+                return {"success": True, "message": "Job recovered and completed", "status": "completed"}
+
+            elif state == "fail":
+                fail_msg = status_data.get("failMsg", "Unknown error")
+                await self.update_job(job_id, {
+                    "status": "failed",
+                    "error": f"Generation failed: {fail_msg}"
+                })
+                return {"success": False, "message": f"Job failed: {fail_msg}", "status": "failed"}
+
+            else:
+                # Still processing
+                return {
+                    "success": True,
+                    "message": f"Job is still processing (state: {state})",
+                    "status": "generating"
+                }
+
+        except Exception as e:
+            return {"success": False, "message": f"Error checking status: {str(e)}"}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import './ImageGallery.css';
 import ImageMenu from './ImageMenu';
 import { ReactComponent as MoreVertIcon } from '../assets/icons/ic_more_vert.svg';
@@ -6,11 +6,19 @@ import { ReactComponent as KeyIcon } from '../assets/icons/ic_key.svg';
 import { ReactComponent as LightIcon } from '../assets/icons/ic_light.svg';
 import { ReactComponent as NightIcon } from '../assets/icons/ic_night.svg';
 
-function ImageGallery({ selectedImage, onImageSelect, theme, onToggleTheme, onOpenApiKey }) {
+const ImageGallery = forwardRef(({ selectedImage, onImageSelect, theme, onToggleTheme, onOpenApiKey }, ref) => {
   const [customImages, setCustomImages] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const fileInputRef = useRef(null);
   const menuButtonRefs = useRef({});
+
+  // Expose addImage method to parent
+  useImperativeHandle(ref, () => ({
+    addImage: (newImage) => {
+      setCustomImages(prev => [newImage, ...prev]);
+      onImageSelect(newImage);
+    }
+  }), [onImageSelect]);
 
   // Load custom images on mount
   useEffect(() => {
@@ -94,6 +102,17 @@ function ImageGallery({ selectedImage, onImageSelect, theme, onToggleTheme, onOp
     setMenuOpen(null);
   };
 
+  const handleRevealInFinder = async (image) => {
+    try {
+      await fetch(`http://localhost:8000/api/custom-images/${image.id}/reveal`, {
+        method: 'POST',
+      });
+    } catch (error) {
+      console.error('Reveal in Finder error:', error);
+    }
+    setMenuOpen(null);
+  };
+
   return (
     <div className="image-gallery">
       <div className="gallery-scroll-area">
@@ -136,6 +155,7 @@ function ImageGallery({ selectedImage, onImageSelect, theme, onToggleTheme, onOp
               {menuOpen === image.id && (
                 <ImageMenu
                   onDelete={() => handleDelete(image)}
+                  onRevealInFinder={() => handleRevealInFinder(image)}
                   onClose={() => setMenuOpen(null)}
                   triggerRef={{ current: menuButtonRefs.current[image.id] }}
                 />
@@ -164,6 +184,6 @@ function ImageGallery({ selectedImage, onImageSelect, theme, onToggleTheme, onOp
       </div>
     </div>
   );
-}
+});
 
 export default ImageGallery;

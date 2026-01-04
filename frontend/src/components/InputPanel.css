@@ -27,12 +27,65 @@
   overflow-y: auto;
 }
 
+/* History header with search and close */
+.history-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.history-search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.938rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.history-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.history-search-input:focus {
+  border-color: #9ca3af;
+}
+
+.history-close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.history-close-btn:hover {
+  border-color: transparent;
+  background-color: var(--bg-tertiary);
+}
+
+.history-close-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Prompt history container */
 .prompt-history {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding-top: 4rem;
+  padding-top: 1rem;
 }
 
 .prompt-card {
@@ -59,6 +112,21 @@
   line-height: 1.5;
 }
 
+.prompt-card-more {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.938rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+  display: inline;
+}
+
+.prompt-card-more:hover {
+  color: var(--text-secondary);
+}
+
 .prompt-card-meta {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -82,6 +150,7 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  z-index: 10;
 }
 
 .history-icon-btn:hover {
@@ -120,6 +189,7 @@
   font-feature-settings: "liga" 0;
   font-variant-ligatures: none;
   white-space-collapse: preserve;
+  scrollbar-width: none;
 }
 
 .prompt-section-new textarea:focus {

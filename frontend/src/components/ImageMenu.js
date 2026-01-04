@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './ImageMenu.css';
 import { ReactComponent as DeleteIcon } from '../assets/icons/ic_delete.svg';
+import { ReactComponent as FolderIcon } from '../assets/icons/ic_folder.svg';
 
-function ImageMenu({ onDelete, onClose, triggerRef }) {
+function ImageMenu({ onDelete, onRevealInFinder, onClose, triggerRef }) {
   const menuRef = useRef(null);
 
   // Close menu when clicking outside
@@ -47,6 +48,10 @@ function ImageMenu({ onDelete, onClose, triggerRef }) {
         left: `${position.left}px`,
       }}
     >
+      <button className="image-menu-item" onClick={onRevealInFinder}>
+        <FolderIcon />
+        <span>Show in Finder</span>
+      </button>
       <button className="image-menu-item" onClick={onDelete}>
         <DeleteIcon />
         <span>Delete</span>

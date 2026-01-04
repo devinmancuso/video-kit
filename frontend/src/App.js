@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import ImageGallery from './components/ImageGallery';
 import InputPanel from './components/InputPanel';
@@ -14,6 +14,7 @@ function App() {
   const [viewMode, setViewMode] = useState('list'); // 'embed' or 'list'
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const galleryRef = useRef(null);
 
   // Apply theme to document
   useEffect(() => {
@@ -68,14 +69,25 @@ function App() {
   };
 
   const handleJobDeleted = (jobId) => {
-    // Remove job from the list
-    setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+    // Remove job from the list or just refresh
+    if (jobId) {
+      setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+    }
+    loadJobs(); // Refresh jobs list
+  };
+
+  const handleImageAdded = (newImage) => {
+    // Notify the gallery to add the new image
+    if (galleryRef.current) {
+      galleryRef.current.addImage(newImage);
+    }
   };
 
   return (
     <div className="app">
       <div className="main-container">
         <ImageGallery
+          ref={galleryRef}
           selectedImage={selectedImage}
           onImageSelect={handleImageSelect}
           theme={theme}
@@ -98,6 +110,7 @@ function App() {
           theme={theme}
           onToggleView={toggleViewMode}
           onJobDeleted={handleJobDeleted}
+          onImageAdded={handleImageAdded}
         />
       </div>
 

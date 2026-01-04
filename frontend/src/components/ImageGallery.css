@@ -18,6 +18,7 @@
   gap: 1rem;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-width: none;
 }
 
 .gallery-bottom-controls {

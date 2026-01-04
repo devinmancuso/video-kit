@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import os
 import shutil
+import subprocess
 from typing import List
 import uuid
 from datetime import datetime
@@ -88,3 +89,20 @@ async def delete_custom_image(image_id: str):
         return {"message": "Image deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete image: {str(e)}")
+
+
+@router.post("/custom-images/{image_id}/reveal")
+async def reveal_in_finder(image_id: str):
+    """Reveal an image in Finder (macOS)."""
+
+    file_path = os.path.join(custom_images_path, image_id)
+    abs_path = os.path.abspath(file_path)
+
+    if not os.path.exists(abs_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    try:
+        subprocess.run(["open", "-R", abs_path], check=True)
+        return {"message": "File revealed in Finder"}
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to reveal file: {str(e)}")

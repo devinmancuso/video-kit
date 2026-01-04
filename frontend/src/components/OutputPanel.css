@@ -73,6 +73,8 @@
 
 .embed-video-player {
   width: 100%;
+  max-height: 400px;
+  object-fit: contain;
   display: block;
   vertical-align: bottom;
   margin: 0;
@@ -210,9 +212,29 @@
 
 .list-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
   margin-top: 48px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.938rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--accent-primary);
 }
 
 .filter-chips {

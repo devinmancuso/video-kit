@@ -15,7 +15,16 @@ function InputPanel({ jobs, selectedImage, onGenerate, isGenerating }) {
   const [likeAnime, setLikeAnime] = useState(false);
   const [showSettingsPopup, setShowSettingsPopup] = useState(false);
   const [historyViewActive, setHistoryViewActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCards, setExpandedCards] = useState({});
   const settingsBtnRef = useRef(null);
+
+  const toggleCardExpansion = (jobId) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [jobId]: !prev[jobId]
+    }));
+  };
 
   const handlePromptCardClick = (job) => {
     setPrompt(job.prompt);
@@ -23,6 +32,11 @@ function InputPanel({ jobs, selectedImage, onGenerate, isGenerating }) {
   };
 
   const toggleHistoryView = () => {
+    if (historyViewActive) {
+      // Reset expanded cards and search when closing
+      setExpandedCards({});
+      setSearchQuery('');
+    }
     setHistoryViewActive(!historyViewActive);
   };
 
@@ -71,9 +85,14 @@ function InputPanel({ jobs, selectedImage, onGenerate, isGenerating }) {
     });
   };
 
-  // Get unique prompts from completed jobs for history
+  // Get jobs for history, filtered by search query
   const promptHistory = jobs
-    .filter(job => job.status === 'completed')
+    .filter(job => {
+      if (searchQuery.trim()) {
+        return job.prompt.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      return true;
+    })
     .slice(0, 20); // Show last 20
 
   return (
@@ -81,28 +100,69 @@ function InputPanel({ jobs, selectedImage, onGenerate, isGenerating }) {
       {historyViewActive ? (
         /* History View */
         <div className="history-view">
-          <button
-            type="button"
-            className="history-icon-btn"
-            onClick={toggleHistoryView}
-            title="Close history"
-          >
-            <CloseIcon />
-          </button>
+          <div className="history-header">
+            <input
+              type="text"
+              className="history-search-input"
+              placeholder="Search prompts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              type="button"
+              className="history-close-btn"
+              onClick={toggleHistoryView}
+              title="Close history"
+            >
+              <CloseIcon />
+            </button>
+          </div>
 
           <div className="prompt-history">
-            {promptHistory.map((job) => (
-              <div
-                key={job.id}
-                className="prompt-card"
-                onClick={() => handlePromptCardClick(job)}
-              >
-                <div className="prompt-card-text">{job.prompt}</div>
-                <div className="prompt-card-meta">
-                  {new Date(job.createdAt).toLocaleDateString()}
+            {promptHistory.map((job) => {
+              const isExpanded = expandedCards[job.id];
+              const isLong = job.prompt.length > 200;
+              const truncatedText = isLong && !isExpanded
+                ? job.prompt.substring(0, 200)
+                : job.prompt;
+
+              return (
+                <div
+                  key={job.id}
+                  className="prompt-card"
+                  onClick={() => handlePromptCardClick(job)}
+                >
+                  <div className="prompt-card-text">
+                    {truncatedText}
+                    {isLong && !isExpanded && (
+                      <button
+                        className="prompt-card-more"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCardExpansion(job.id);
+                        }}
+                      >
+                        more...
+                      </button>
+                    )}
+                    {isLong && isExpanded && (
+                      <button
+                        className="prompt-card-more"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCardExpansion(job.id);
+                        }}
+                      >
+                        less
+                      </button>
+                    )}
+                  </div>
+                  <div className="prompt-card-meta">
+                    {new Date(job.createdAt).toLocaleDateString()}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (

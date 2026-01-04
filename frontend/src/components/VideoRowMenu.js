@@ -4,8 +4,9 @@ import './VideoRowMenu.css';
 import { ReactComponent as DeleteIcon } from '../assets/icons/ic_delete.svg';
 import { ReactComponent as DownloadIcon } from '../assets/icons/ic_download.svg';
 import { ReactComponent as CopyIcon } from '../assets/icons/ic_copy.svg';
+import { ReactComponent as RefreshIcon } from '../assets/icons/ic_refresh.svg';
 
-function VideoRowMenu({ onDownload, onCopyPrompt, onDelete, onClose, triggerRef }) {
+function VideoRowMenu({ onDownload, onCopyPrompt, onDelete, onCheckStatus, onClose, triggerRef, showCheckStatus }) {
   const menuRef = useRef(null);
 
   // Close menu when clicking outside
@@ -62,6 +63,12 @@ function VideoRowMenu({ onDownload, onCopyPrompt, onDelete, onClose, triggerRef 
         left: `${position.left}px`,
       }}
     >
+      {showCheckStatus && (
+        <button className="video-row-menu-item" onClick={onCheckStatus}>
+          <RefreshIcon />
+          <span>Check Status</span>
+        </button>
+      )}
       <button className="video-row-menu-item" onClick={onDownload}>
         <DownloadIcon />
         <span>Download</span>

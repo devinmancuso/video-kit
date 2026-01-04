@@ -44,6 +44,11 @@ export const deleteJob = async (jobId) => {
   return response.data;
 };
 
+export const checkJobStatus = async (jobId) => {
+  const response = await api.post(`/api/jobs/${jobId}/check-status`);
+  return response.data;
+};
+
 // Environment API
 export const getKieApiKey = async () => {
   const response = await api.get('/api/env/kie-api-key');

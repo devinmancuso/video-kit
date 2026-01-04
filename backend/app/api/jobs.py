@@ -51,3 +51,30 @@ async def delete_job(job_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/jobs/{job_id}/check-status")
+async def check_and_recover_job(job_id: str):
+    """
+    Manually check status of a generating job and recover if complete.
+    Useful when the server restarts during generation and loses the polling task.
+    """
+    try:
+        job = await job_manager.get_job(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="Job not found")
+
+        if job.status not in ["pending", "uploading", "generating"]:
+            return {"message": "Job is not in a recoverable state", "status": job.status}
+
+        if not job.kieTaskId:
+            raise HTTPException(status_code=400, detail="Job has no task ID to check")
+
+        # Check and recover the job
+        result = await job_manager.check_and_recover_job(job_id)
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
