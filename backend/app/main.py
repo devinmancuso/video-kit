@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-from app.api import generate, jobs, fighters, custom_images, env
+from app.api import generate, jobs, custom_images, env
 
 app = FastAPI(title="Fight Video Generator API", version="1.0.0")
 
@@ -33,7 +33,6 @@ app.mount("/custom-images", StaticFiles(directory=custom_images_path), name="cus
 # Include routers
 app.include_router(generate.router, prefix="/api", tags=["generate"])
 app.include_router(jobs.router, prefix="/api", tags=["jobs"])
-app.include_router(fighters.router, prefix="/api", tags=["fighters"])
 app.include_router(custom_images.router, prefix="/api", tags=["custom-images"])
 app.include_router(env.router, prefix="/api", tags=["env"])
 

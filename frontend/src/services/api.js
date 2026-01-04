@@ -9,17 +9,6 @@ const api = axios.create({
   },
 });
 
-// Fighters API
-export const getFighters = async () => {
-  const response = await api.get('/api/fighters');
-  return response.data;
-};
-
-export const getFighter = async (fighterId) => {
-  const response = await api.get(`/api/fighters/${fighterId}`);
-  return response.data;
-};
-
 // Video Generation API
 export const generateVideo = async (formData) => {
   const response = await api.post('/api/generate', formData);

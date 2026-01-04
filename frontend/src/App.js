@@ -7,10 +7,9 @@ import ApiKeyModal from './components/ApiKeyModal';
 import { ReactComponent as KeyIcon } from './assets/icons/ic_key.svg';
 import { ReactComponent as LightIcon } from './assets/icons/ic_light.svg';
 import { ReactComponent as NightIcon } from './assets/icons/ic_night.svg';
-import { getFighters, generateVideo, getJobs } from './services/api';
+import { generateVideo, getJobs } from './services/api';
 
 function App() {
-  const [fighters, setFighters] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -24,22 +23,13 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Load fighters on mount
+  // Load jobs on mount and poll for updates
   useEffect(() => {
     loadJobs();
     // Poll for job updates every 10 seconds
     const interval = setInterval(loadJobs, 10000);
     return () => clearInterval(interval);
   }, []);
-
-  const loadFighters = async () => {
-    try {
-      const data = await getFighters();
-      setFighters(data);
-    } catch (error) {
-      console.error('Failed to load fighters:', error);
-    }
-  };
 
   const loadJobs = async () => {
     try {

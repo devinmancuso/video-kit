@@ -139,7 +139,6 @@ video-kit/
 │   │   └── App.js
 │   └── package.json
 ├── data/                  # Local storage (gitignored)
-│   ├── fighters/          # Reference images
 │   ├── videos/            # Generated videos
 │   ├── custom-images/     # Uploaded images
 │   └── jobs.json          # Job history
@@ -154,7 +153,6 @@ video-kit/
 | GET | `/api/jobs` | List all jobs |
 | GET | `/api/jobs/{id}` | Get job status |
 | DELETE | `/api/jobs/{id}` | Delete a job |
-| GET | `/api/fighters` | List available fighters |
 | POST | `/api/custom-images/upload` | Upload reference image |
 | GET | `/api/custom-images` | List uploaded images |
 | DELETE | `/api/custom-images/{id}` | Delete uploaded image |
